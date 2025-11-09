@@ -17,6 +17,7 @@ import Groups from './Groups';
 import Profile from './Profile';
 import Settings from './Settings';
 import TailwindRegPage from './TailwindRegPage';
+import Error404 from './Error404.js';
 
 function Layout() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -215,6 +216,7 @@ function Layout() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/register" element={<TailwindRegPage />} />
+                <Route path="*" element={<Error404 />} />
               </Routes>
           
           </div>
