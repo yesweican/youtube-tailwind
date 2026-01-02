@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight, faHome, faFeed, faFilm,faPenToSquare, faVideo, faCog ,faCircleUser, faUsers, faSearch} from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight, faHome, faFeed, faFilm,faPenToSquare, faVideo, faTv, faTvAlt, faCog ,faCircleUser, faUsers, faSearch} from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AUTH_API_END_POINT } from '../config/constants.js';
@@ -12,6 +12,8 @@ import Component1 from './Component1';
 import Component2 from './Component2';
 import NewArticle from './NewArticle';
 import NewVideo from './NewVideo';
+import NewChannel from './NewChannel';
+import ManageChannel from './Error404';
 import NewComment from './NewComment';
 import Groups from './Groups';
 import Profile from './Profile';
@@ -172,6 +174,22 @@ function Layout() {
             <button
               className="text-left p-2 hover:bg-gray-700 rounded-md"
             >
+              <Link to="/newchannel" className="text-left p-2 hover:bg-gray-700 rounded-md">
+              <FontAwesomeIcon icon={faTv} className="mr-2" />
+                New Channel
+              </Link>
+            </button>
+            <button
+              className="text-left p-2 hover:bg-gray-700 rounded-md"
+            >
+              <Link to="/managechannel" className="text-left p-2 hover:bg-gray-700 rounded-md">
+              <FontAwesomeIcon icon={faTvAlt} className="mr-2" />
+                Manage Channel
+              </Link>
+            </button>            
+            <button
+              className="text-left p-2 hover:bg-gray-700 rounded-md"
+            >
               <Link to="/groups" className="text-left p-2 hover:bg-gray-700 rounded-md">
               <FontAwesomeIcon icon={faUsers} className="mr-2" />
                 Groups
@@ -211,6 +229,8 @@ function Layout() {
                 <Route path="/component2" element={<Component2 />} />
                 <Route path="/newarticle" element={<NewArticle />} />
                 <Route path="/newvideo" element={<NewVideo />} />  
+                <Route path="/newchannel" element={<NewChannel />} />
+                <Route path="/managechannel" element={<ManageChannel />} /> 
                 <Route path="/newcomment" element={<NewComment />} />                              
                 <Route path="/groups" element={<Groups />} />
                 <Route path="/profile" element={<Profile />} />
