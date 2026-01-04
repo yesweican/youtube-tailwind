@@ -18,7 +18,7 @@ import NewComment from './NewComment';
 import Groups from './Groups';
 import Profile from './Profile';
 import Settings from './Settings';
-import TailwindRegPage from './TailwindRegPage';
+import RegistrationPage from './RegistrationPage';
 import Error404 from './Error404.js';
 
 function Layout() {
@@ -235,7 +235,7 @@ function Layout() {
                 <Route path="/groups" element={<Groups />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
-                <Route path="/register" element={<TailwindRegPage />} />
+                <Route path="/register" element={<RegistrationPage />} />
                 <Route path="*" element={<Error404 />} />
               </Routes>
           

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { AUTH_API_END_POINT } from '../config/constants.js';
 import axios from 'axios';
 
-function TailwindRegPage() {
+function RegistrationPage() {
     const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -108,4 +108,4 @@ function TailwindRegPage() {
   );
 }
 
-export default TailwindRegPage;
+export default RegistrationPage;
