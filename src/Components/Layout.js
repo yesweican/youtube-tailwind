@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight, faHome, faFeed, faFilm,faPenToSquare, faVideo, faTv, faTvAlt, faCog ,faCircleUser, faUsers, faSearch} from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { AUTH_API_END_POINT } from '../config/constants.js';
 
 // Import your content components
 import Home from './Home';
@@ -19,64 +17,33 @@ import Groups from './Groups';
 import Profile from './Profile';
 import Settings from './Settings';
 import RegistrationPage from './RegistrationPage';
+import Login from './Login';
+
 import Error404 from './Error404.js';
 
 function Layout() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLogInDialog, setShowLogInDialog] = useState(false);
-  const [loginUser, setLoginUser] = useState({
-    username: '',
-    password: ''});
   const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
-  const clickLogIn = () => {
-    setShowLogInDialog(true);
-    //setIsLoggedIn(true);    
+  const clickLogIn = () => setShowLogInDialog(true);
+  const clickLogOut = () => setIsLoggedIn(false);
+
+  const handleLoginSuccess = (user) => {
+    setIsLoggedIn(true);
+    console.log(`Login successful! Welcome, ${user.username}`);
   };
 
-  const clickLogOut = () => {
-    setIsLoggedIn(false);
-  };
 
   const clickRegister = () => {
     navigate('/register');
   };  
 
-  const handleLogInChange = (e) => {
-    setLoginUser((prevUser) =>({ ...prevUser, [e.target.name]: e.target.value }));
-  };
-
-  const handleLogInClose = () => setShowLogInDialog(false);
-  const handleLogInSubmit = async (e) => {
-    e.preventDefault(); // Prevents the page from refreshing
-    // Handle login logic here
-    try {
-      const response = await axios.post(AUTH_API_END_POINT+'/login', loginUser);
-
-      //Only after successful  authentication
-      setIsLoggedIn(true);
-
-      // Extract tokens from the response
-      const { user, accessToken, refreshToken } = response.data;
-
-      // Save tokens to localStorage
-      localStorage.setItem('currentUser', user);
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-
-      console.log(`Login successful! Welcome, ${response.data.user.username}`);
-    } catch (error) {
-      console.log(`Login failed: ${error.response?.data?.message || error.message}`);
-    } 
-    console.log("Username:", loginUser.username, "Password:", loginUser.password);
-    setShowLogInDialog(false);
-
-  };
 
   return (
     <div className="flex flex-col h-screen">
@@ -241,52 +208,12 @@ function Layout() {
           
           </div>
           <div className="relative">
-          {showLogInDialog && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white rounded-lg w-96 p-6 shadow-lg">
-              <form onSubmit={handleLogInSubmit}>
-              <h2 className="text-lg font-semibold">Login</h2>
-                <div className="my-4">
-                  <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Email(or Username)"
-                    value={loginUser.username}
-                    onChange={handleLogInChange}
-                    className="w-full p-2 border rounded-md mb-4"
-                  />
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Password"
-                    value={loginUser.password}
-                    onChange={handleLogInChange}
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-                
-                <div className="flex justify-end space-x-4 mt-4">
-                  <button
-                    onClick={handleLogInClose}
-                    className="px-4 py-2 bg-gray-300 rounded-md"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md"
-                  >
-                    Submit
-                  </button>
-                </div>
-              </form>
-              </div>
-            </div>
-          )}
+            <Login
+              open={showLogInDialog}
+              onClose={() => setShowLogInDialog(false)}
+              onLoginSuccess={handleLoginSuccess}
+            />
           </div>
-
       </div>
     </div>
   );
