@@ -1,27 +1,33 @@
-import React, { useState } from 'react';
 import axios from 'axios';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema } from '../validation/loginSchema';
 import { AUTH_API_END_POINT } from '../config/constants.js';
 
 function Login({ open, onClose, onLoginSuccess }) {
-  const [loginUser, setLoginUser] = useState({
-    username: '',
-    password: '',
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      identifier: '',
+      password: '',
+    },
   });
 
-  const handleChange = (e) => {
-    setLoginUser((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
+    const payload = {
+      username: data.identifier.trim(),
+      password: data.password,
+    };
 
     try {
       const response = await axios.post(
         `${AUTH_API_END_POINT}/login`,
-        loginUser
+        payload
       );
 
       const { user, accessToken, refreshToken } = response.data;
@@ -31,6 +37,7 @@ function Login({ open, onClose, onLoginSuccess }) {
       localStorage.setItem('refreshToken', refreshToken);
 
       onLoginSuccess(user);
+      reset();
       onClose();
     } catch (error) {
       console.error(
@@ -45,31 +52,46 @@ function Login({ open, onClose, onLoginSuccess }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-lg w-96 p-6 shadow-lg">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <h2 className="text-lg font-semibold mb-4">Login</h2>
 
-          <input
-            type="text"
-            name="username"
-            placeholder="Email (or Username)"
-            value={loginUser.username}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md mb-4"
-          />
+          {/* Identifier */}
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Email or Username"
+              className={`w-full p-2 border rounded-md focus:outline-none focus:ring
+                ${errors.identifier ? 'border-red-500' : 'border-gray-300'}`}
+              {...register('identifier')}
+            />
+            {errors.identifier && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.identifier.message}
+              </p>
+            )}
+          </div>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={loginUser.password}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-          />
+          {/* Password */}
+          <div className="mb-4">
+            <input
+              type="password"
+              placeholder="Password"
+              className={`w-full p-2 border rounded-md focus:outline-none focus:ring
+                ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+              {...register('password')}
+            />
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
 
           <div className="flex justify-end space-x-4 mt-6">
             <button
               type="button"
               onClick={onClose}
+              disabled={isSubmitting}
               className="px-4 py-2 bg-gray-300 rounded-md"
             >
               Cancel
@@ -77,9 +99,10 @@ function Login({ open, onClose, onLoginSuccess }) {
 
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded-md"
+              disabled={isSubmitting}
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-60"
             >
-              Submit
+              {isSubmitting ? 'Logging in…' : 'Submit'}
             </button>
           </div>
         </form>
@@ -89,3 +112,4 @@ function Login({ open, onClose, onLoginSuccess }) {
 }
 
 export default Login;
+
