@@ -7,7 +7,8 @@ import { useNavigate } from 'react-router-dom';
 // Import your content components
 import Home from './Home';
 import Component1 from './Component1';
-import Component2 from './Component2';
+import VideoSearch from './VideoSearch.js';
+import VideoPopularity from './VideoPopularity.js'; 
 import NewArticle from './NewArticle';
 import NewVideo from './NewVideo';
 import NewChannel from './NewChannel';
@@ -39,6 +40,13 @@ function Layout() {
     console.log(`Login successful! Welcome, ${user.username}`);
   };
 
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = () => {
+  if (!searchTerm.trim()) return;
+    navigate(`/videosearch?q=${encodeURIComponent(searchTerm.trim())}`);
+  };
+
 
   const clickRegister = () => {
     navigate('/register');
@@ -62,10 +70,13 @@ function Layout() {
             <input
               type="text"
               placeholder="Search..."
-              className="p-2 w-64 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500 rounded-r-md h-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="p-2 w-64 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500 rounded-r-md h-10 text-black"
             />
             {/* Button */}
-            <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+            <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              onClick={handleSearch}>
               Search
             </button>
           </div>
@@ -117,9 +128,17 @@ function Layout() {
             <button
               className="text-left p-2 hover:bg-gray-700 rounded-md"
             >
-              <Link to="/component2" className="text-left p-2 hover:bg-gray-700 rounded-md">
+              <Link to="/videosearch" className="text-left p-2 hover:bg-gray-700 rounded-md">
+              <FontAwesomeIcon icon={faSearch} className="mr-2" />
+                Video Search
+              </Link>
+            </button>
+            <button
+              className="text-left p-2 hover:bg-gray-700 rounded-md"
+            >
+              <Link to="/videopopularity" className="text-left p-2 hover:bg-gray-700 rounded-md">
               <FontAwesomeIcon icon={faFilm} className="mr-2" />
-                Menu 2
+                Video Popularity
               </Link>
             </button>
             <button
@@ -193,7 +212,8 @@ function Layout() {
                 <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/component1" element={<Component1 />} />
-                <Route path="/component2" element={<Component2 />} />
+                <Route path="/videosearch" element={<VideoSearch />} />
+                <Route path="/videopopularity" element={<VideoPopularity />} />
                 <Route path="/newarticle" element={<NewArticle />} />
                 <Route path="/newvideo" element={<NewVideo />} />  
                 <Route path="/newchannel" element={<NewChannel />} />
