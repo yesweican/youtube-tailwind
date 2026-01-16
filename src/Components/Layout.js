@@ -8,11 +8,12 @@ import { useNavigate } from 'react-router-dom';
 import Home from './Home';
 import Component1 from './Component1';
 import VideoSearch from './VideoSearch.js';
-import VideoPopularity from './VideoPopularity.js'; 
+import VideoPopular from './VideoPopular.js'; 
+import MyVideos from './MyVideos.js';
 import NewArticle from './NewArticle';
 import NewVideo from './NewVideo';
 import NewChannel from './NewChannel';
-import ManageChannel from './Error404';
+import MyChannels from './MyChannels.js';
 import NewComment from './NewComment';
 import Groups from './Groups';
 import Profile from './Profile';
@@ -136,9 +137,17 @@ function Layout() {
             <button
               className="text-left p-2 hover:bg-gray-700 rounded-md"
             >
-              <Link to="/videopopularity" className="text-left p-2 hover:bg-gray-700 rounded-md">
+              <Link to="/videopopular" className="text-left p-2 hover:bg-gray-700 rounded-md">
               <FontAwesomeIcon icon={faFilm} className="mr-2" />
-                Video Popularity
+                Video Popular
+              </Link>
+            </button>
+            <button
+              className="text-left p-2 hover:bg-gray-700 rounded-md"
+            >
+              <Link to="/myvideos" className="text-left p-2 hover:bg-gray-700 rounded-md">
+              <FontAwesomeIcon icon={faFilm} className="mr-2" />
+                My Videos
               </Link>
             </button>
             <button
@@ -168,9 +177,9 @@ function Layout() {
             <button
               className="text-left p-2 hover:bg-gray-700 rounded-md"
             >
-              <Link to="/managechannel" className="text-left p-2 hover:bg-gray-700 rounded-md">
+              <Link to="/mychannels" className="text-left p-2 hover:bg-gray-700 rounded-md">
               <FontAwesomeIcon icon={faTvAlt} className="mr-2" />
-                Manage Channel
+                My Channels
               </Link>
             </button>            
             <button
@@ -213,11 +222,12 @@ function Layout() {
                 <Route path="/home" element={<Home />} />
                 <Route path="/component1" element={<Component1 />} />
                 <Route path="/videosearch" element={<VideoSearch />} />
-                <Route path="/videopopularity" element={<VideoPopularity />} />
+                <Route path="/videopopular" element={<VideoPopular />} />
+                <Route path="/myvideos" element={<MyVideos />} />
                 <Route path="/newarticle" element={<NewArticle />} />
                 <Route path="/newvideo" element={<NewVideo />} />  
                 <Route path="/newchannel" element={<NewChannel />} />
-                <Route path="/managechannel" element={<ManageChannel />} /> 
+                <Route path="/mychannels" element={<MyChannels />} /> 
                 <Route path="/newcomment" element={<NewComment />} />                              
                 <Route path="/groups" element={<Groups />} />
                 <Route path="/profile" element={<Profile />} />
