@@ -27,7 +27,7 @@ function MyVideos() {
         }
 
         const data = await res.json();
-        setVideos(data);
+        setVideos(data.results || []);
       } catch (err) {
         setError(err.message);
       } finally {

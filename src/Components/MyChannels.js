@@ -27,7 +27,7 @@ function MyChannels() {
         }
 
         const data = await res.json();
-        setChannels(data);
+        setChannels(data.results || []);
       } catch (err) {
         setError(err.message);
       } finally {
