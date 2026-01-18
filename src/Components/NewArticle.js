@@ -3,7 +3,14 @@ import { ARTICLE_API_END_POINT } from '../config/constants.js';
 import axios from 'axios';
 
 function NewArticle() {
-    const [formData, setFormData] = useState({
+  const [file, setFile] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const [formData, setFormData] = useState({
     title: '',
     details: '',
   });
@@ -15,15 +22,26 @@ function NewArticle() {
   const handleNewArticle = async (e) => {
     e.preventDefault(); // Prevents the page from refreshing
 
+    const data = new FormData();
+    data.append('title', formData.title);
+    data.append('details', formData.details);
+    data.append('file', file);
     try {
       const accessToken = localStorage.getItem('accessToken');
       const response = await axios.post(
-        ARTICLE_API_END_POINT, 
-        formData,
+        ARTICLE_API_END_POINT,
+        data,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`, // Token in header
+           'Content-Type': 'multipart/form-data'
           },
+          onUploadProgress: (progressEvent) => {
+            const percentComplete = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percentComplete);
+          }, 
         }
       );
 
@@ -61,6 +79,29 @@ function NewArticle() {
               class="block p-2.5 w-2/3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500" 
               placeholder="Write your article here...">
             </textarea>
+          </div>
+          <div className="p-4 text-center">
+            <input
+              type="file"
+              onChange={handleFileChange}
+              className="hidden"
+              id="file-input"
+            />
+            <label htmlFor="file-input" className="inline-block bg-blue-500 text-white px-4 py-2 rounded shadow cursor-pointer mt-4">
+                Choose File
+            </label>
+            {file && <p className="mt-2">{file.name}</p>}
+            {uploadProgress > 0 && (
+              <div className="mt-4 w-full">
+                <div className="bg-gray-200 rounded h-4">
+                  <div
+                    className="bg-green-500 h-4 rounded"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-sm">{uploadProgress}%</p>
+              </div>
+            )}
           </div>
           <div className="text-center mt-8">
             <button
