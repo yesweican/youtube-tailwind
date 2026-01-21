@@ -11,6 +11,7 @@ import VideoSearch from './VideoSearch.js';
 import VideoPopular from './VideoPopular.js'; 
 import MyVideos from './MyVideos.js';
 import NewArticle from './NewArticle';
+import MyArticles from './MyArticles.js';
 import NewVideo from './NewVideo';
 import NewChannel from './NewChannel';
 import MyChannels from './MyChannels.js';
@@ -153,6 +154,14 @@ function Layout() {
             <button
               className="text-left p-2 hover:bg-gray-700 rounded-md"
             >
+              <Link to="/newvideo" className="text-left p-2 hover:bg-gray-700 rounded-md">
+              <FontAwesomeIcon icon={faVideo} className="mr-2" />
+                New Video
+              </Link>
+            </button>
+            <button
+              className="text-left p-2 hover:bg-gray-700 rounded-md"
+            >
               <Link to="/newarticle" className="text-left p-2 hover:bg-gray-700 rounded-md">
               <FontAwesomeIcon icon={faPenToSquare} className="mr-2" />
                 New Article
@@ -161,9 +170,9 @@ function Layout() {
             <button
               className="text-left p-2 hover:bg-gray-700 rounded-md"
             >
-              <Link to="/newvideo" className="text-left p-2 hover:bg-gray-700 rounded-md">
-              <FontAwesomeIcon icon={faVideo} className="mr-2" />
-                New Video
+              <Link to="/myarticles" className="text-left p-2 hover:bg-gray-700 rounded-md">
+              <FontAwesomeIcon icon={faPenToSquare} className="mr-2" />
+                My Articles
               </Link>
             </button>
             <button
@@ -224,8 +233,9 @@ function Layout() {
                 <Route path="/videosearch" element={<VideoSearch />} />
                 <Route path="/videopopular" element={<VideoPopular />} />
                 <Route path="/myvideos" element={<MyVideos />} />
+                <Route path="/newvideo" element={<NewVideo />} />
                 <Route path="/newarticle" element={<NewArticle />} />
-                <Route path="/newvideo" element={<NewVideo />} />  
+                <Route path="/myarticles" element={<MyArticles />} />
                 <Route path="/newchannel" element={<NewChannel />} />
                 <Route path="/mychannels" element={<MyChannels />} /> 
                 <Route path="/newcomment" element={<NewComment />} />                              
