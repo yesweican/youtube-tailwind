@@ -62,30 +62,32 @@ function MyChannels() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex flex-col gap-4">
         {channels.map((channel) => (
-          <div
+          <a
             key={channel.id}
-            className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
+            href={`/channels/${channel.id}`}
+            className="block border rounded-lg p-4 transition
+                      hover:shadow-md hover:border-gray-300
+                      focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <div className="p-4">
-              <h2 className="text-sm font-semibold line-clamp-2 mb-1">
-                {channel.title}
-              </h2>
+            <h2 className="text-sm font-semibold line-clamp-2 mb-1">
+              {channel.title}
+            </h2>
 
-              {channel.description && (
-                <p className="text-xs text-gray-600 line-clamp-3 mb-2">
-                  {channel.description}
-                </p>
-              )}
-
-              <p className="text-xs text-gray-400">
-                {new Date(channel.created_at).toLocaleDateString()}
+            {channel.description && (
+              <p className="text-xs text-gray-600 line-clamp-3 mb-2">
+                {channel.description}
               </p>
-            </div>
-          </div>
+            )}
+
+            <p className="text-xs text-gray-400">
+              {new Date(channel.created_at).toLocaleDateString()}
+            </p>
+          </a>
         ))}
       </div>
+
     </div>
   );
 }
