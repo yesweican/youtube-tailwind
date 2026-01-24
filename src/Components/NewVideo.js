@@ -1,10 +1,36 @@
-import React, { useState } from 'react';
-import { VIDEO_API_END_POINT } from '../config/constants.js';
+import { useEffect, useState } from 'react';
+import { VIDEO_API_END_POINT, CHANNEL_API_END_POINT } from '../config/constants.js';
 import axios from 'axios';
 
 function NewVideo() {
+
+  const [channels, setChannels] = useState([]);
+  const [loadingChannels, setLoadingChannels] = useState(true);
+
   const [file, setFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  useEffect(() => {
+    const fetchChannels = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+
+        const res = await axios.get(CHANNEL_API_END_POINT, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        });
+
+        setChannels(res.data.results);
+      } catch (err) {
+        console.error('Failed to load channels', err);
+      } finally {
+        setLoadingChannels(false);
+      }
+    };
+
+    fetchChannels();
+  }, []);
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -13,7 +39,8 @@ function NewVideo() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    tags:''
+    tags:'',
+    channelId: ''
   });
 
   const handleChange = (e) => {
@@ -29,7 +56,8 @@ function NewVideo() {
       const data = new FormData();
       data.append('title', formData.title);
       data.append('description', formData.description);
-      data.append('tags', formData.tags);           
+      data.append('tags', formData.tags);  
+      data.append('channelId', formData.channelId);
       data.append('file', file);
 
       const accessToken = localStorage.getItem('accessToken');
@@ -107,6 +135,30 @@ function NewVideo() {
                 <p className="text-sm">{uploadProgress}%</p>
               </div>
             )}
+          </div>
+          <div className="flex items-center space-x-3">
+            <label className="w-1/3 text-gray-700 text-center">
+              Channel
+            </label>
+            <select
+              name="channelId"
+              value={formData.channelId}
+              onChange={handleChange}
+              disabled={loadingChannels}
+              className="w-2/3 px-4 py-2 border border-gray-300 rounded-md
+                        focus:outline-none focus:border-indigo-500
+                        disabled:bg-gray-100"
+            >
+              <option value="">
+                {loadingChannels ? 'Loading channels...' : 'Select a channel'}
+              </option>
+
+              {channels.map(channel => (
+                <option key={channel._id} value={channel._id}>
+                  {channel.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="text-center mt-8">
             <button
