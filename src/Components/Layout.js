@@ -245,7 +245,7 @@ function Layout() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/register" element={<RegistrationPage />} />
-                <Route path="/video" element={<VideoDisplay />} />
+                <Route path="/video/:id" element={<VideoDisplay />} />
                 <Route path="/videoedit/:id" element={<VideoEdit />} />                
                 <Route path="*" element={<Error404 />} />
               </Routes>
