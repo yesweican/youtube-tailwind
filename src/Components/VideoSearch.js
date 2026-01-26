@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router-dom";
+import { Link as RouterLink, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { VIDEO_SEARCH_API_END_POINT } from "../config/constants";
 
@@ -80,27 +80,28 @@ function VideoSearch() {
             key={video.id}
             className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
           >
-            <video
-              src={video.video_url}
-              controls
-              className="w-full h-48 object-cover bg-black"
-            />
+            <RouterLink to={`/video/${video.id}`}>
+              <video
+                src={video.video_url}
+                controls
+                className="w-full h-48 object-cover bg-black"
+              />
+              <div className="p-4">
+                <h2 className="text-sm font-semibold line-clamp-2 mb-1">
+                  {video.title}
+                </h2>
 
-            <div className="p-4">
-              <h2 className="text-sm font-semibold line-clamp-2 mb-1">
-                {video.title}
-              </h2>
+                {video.description && (
+                  <p className="text-xs text-gray-600 line-clamp-3 mb-2">
+                    {video.description}
+                  </p>
+                )}
 
-              {video.description && (
-                <p className="text-xs text-gray-600 line-clamp-3 mb-2">
-                  {video.description}
+                <p className="text-xs text-gray-400">
+                  {new Date(video.created_at).toLocaleDateString()}
                 </p>
-              )}
-
-              <p className="text-xs text-gray-400">
-                {new Date(video.created_at).toLocaleDateString()}
-              </p>
-            </div>
+              </div>
+            </RouterLink>
           </div>
         ))}
       </div>

@@ -69,7 +69,7 @@ function MyVideos() {
             key={video.id}
             className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
           >
-            <RouterLink to={`/videos/${video.id}`}>
+            <RouterLink to={`/videoedit/${video.id}`}>
               <video
                 src={video.video_url}
                 controls

@@ -21,6 +21,8 @@ import Profile from './Profile';
 import Settings from './Settings';
 import RegistrationPage from './RegistrationPage';
 import Login from './Login';
+import VideoDisplay from './VideoDisplay.js'; 
+import VideoEdit from './VideoEdit.js'; 
 
 import Error404 from './Error404.js';
 
@@ -243,6 +245,8 @@ function Layout() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/register" element={<RegistrationPage />} />
+                <Route path="/video" element={<VideoDisplay />} />
+                <Route path="/videoedit/:id" element={<VideoEdit />} />                
                 <Route path="*" element={<Error404 />} />
               </Routes>
           
