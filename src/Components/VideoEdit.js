@@ -9,7 +9,7 @@ function VideoEdit() {
   const [form, setForm] = useState({
     title: "",
     description: "",
-    channelId: ""
+    channel_id: ""
   });
 
   const [channels, setChannels] = useState([]);
@@ -44,8 +44,8 @@ function VideoEdit() {
         setForm({
           title: video.title || "",
           description: video.description || "",
-          channelId:
-            video.channelId?._id || video.channelId || ""
+          channel_id:
+            video.channel_id?._id || video.channel_id || ""
         });
 
         setChannels(channelList);
@@ -73,6 +73,8 @@ function VideoEdit() {
     try {
       setSaving(true);
       setError(null);
+
+      console.log("Submitting form:", form);
 
       const res = await fetch(`${VIDEO_API_END_POINT}/${id}`, {
         method: "PATCH",
@@ -145,8 +147,8 @@ function VideoEdit() {
         <div>
           <label className="block text-sm font-medium mb-1">Channel</label>
           <select
-            name="channelId"
-            value={form.channelId}
+            name="channel_id"
+            value={form.channel_id}
             onChange={handleChange}
             className="w-full rounded border px-3 py-2 bg-white focus:outline-none focus:ring"
             required
