@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 // Import your content components
 import Home from './Home';
 import Component1 from './Component1';
+import ChannelDisplay from './ChannelDisplay.js'; 
+import ChannelEdit from './ChannelEdit.js'; 
 import VideoSearch from './VideoSearch.js';
 import VideoPopular from './VideoPopular.js'; 
 import MyVideos from './MyVideos.js';
@@ -232,6 +234,8 @@ function Layout() {
                 <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/component1" element={<Component1 />} />
+                <Route path="/channel/:id" element={<ChannelDisplay />} />
+                <Route path="/channeledit/:id" element={<ChannelEdit />} />  
                 <Route path="/videosearch" element={<VideoSearch />} />
                 <Route path="/videopopular" element={<VideoPopular />} />
                 <Route path="/myvideos" element={<MyVideos />} />

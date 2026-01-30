@@ -66,7 +66,7 @@ function MyChannels() {
         {channels.map((channel) => (
           <a
             key={channel.id}
-            href={`/channels/${channel.id}`}
+            href={`/channeledit/${channel.id}`}
             className="block border rounded-lg p-4 transition
                       hover:shadow-md hover:border-gray-300
                       focus:outline-none focus:ring-2 focus:ring-blue-500"
