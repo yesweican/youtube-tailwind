@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { CHANNEL_API_END_POINT } from "../config/constants";
+import { SUBSCRIPTION_API_END_POINT, CHANNEL_API_END_POINT } from "../config/constants";
 
 function ChannelDisplay() {
   const { id } = useParams();
@@ -8,6 +8,10 @@ function ChannelDisplay() {
   const [channel, setChannel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [subscribing, setSubscribing] = useState(false);
+
+  const token = localStorage.getItem("accessToken");
 
   useEffect(() => {
     const fetchChannel = async () => {
@@ -30,6 +34,24 @@ function ChannelDisplay() {
 
     fetchChannel();
   }, [id]);
+
+  const handleSubscribe = async () => {
+    try {
+      setSubscribing(true);
+
+      await fetch(`${SUBSCRIPTION_API_END_POINT}/${id}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+        })
+      console.log("Subscribed to channel:", channel._id || id);
+      alert("Subscribed successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to subscribe");
+    } finally {
+      setSubscribing(false);
+    }
+  };
 
   /* ---------- Loading State ---------- */
   if (loading) {
@@ -55,9 +77,25 @@ function ChannelDisplay() {
     <div className="max-w-4xl mx-auto mt-6 px-4">
       {/* ---------- Metadata Card ---------- */}
       <div className="bg-white rounded-lg shadow p-5">
-        <h1 className="text-xl font-semibold mb-2">
-          {channel.name}
-        </h1>
+        {/* Header row */}
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-xl font-semibold">
+            {channel.name}
+          </h1>
+
+          <button
+            onClick={handleSubscribe}
+            disabled={subscribing}
+            className={`px-4 py-2 text-sm font-medium rounded text-white transition
+              ${
+                subscribing
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }`}
+          >
+            {subscribing ? "Subscribing..." : "Subscribe"}
+          </button>
+        </div>
 
         {channel.description && (
           <p className="text-gray-700 mb-3">
@@ -67,7 +105,7 @@ function ChannelDisplay() {
 
         {channel.owner && (
           <p className="text-sm text-gray-500">
-            Created by: {channel.owner}
+            Created by: {channel.owner.fullname ?? channel.owner}
           </p>
         )}
       </div>
