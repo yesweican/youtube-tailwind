@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { VIDEO_API_END_POINT } from "../config/constants";
+import { SUBSCRIPTION_API_END_POINT, VIDEO_API_END_POINT } from "../config/constants";
 
 function VideoDisplay() {
   const { id } = useParams();
@@ -8,6 +8,10 @@ function VideoDisplay() {
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [subscribing, setSubscribing] = useState(false);
+
+  const token = localStorage.getItem("accessToken"); 
 
   useEffect(() => {
     const fetchVideo = async () => {
@@ -30,6 +34,24 @@ function VideoDisplay() {
 
     fetchVideo();
   }, [id]);
+
+    const handleSubscribe = async () => {
+    try {
+      setSubscribing(true);
+
+      await fetch(`${SUBSCRIPTION_API_END_POINT}/${video.channel_id}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      console.log("Subscribed to channel:", video.channel_id);
+      alert("Subscribed successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to subscribe");
+    } finally {
+      setSubscribing(false);
+    }
+  };
 
   /* ---------- Loading State ---------- */
   if (loading) {
@@ -75,9 +97,23 @@ function VideoDisplay() {
         )}
 
         {video.channel_id && (
-          <p className="text-sm text-gray-500">
-            Channel: {video.channel_id.name || video.channel_id}
-          </p>
+          <div> 
+            <p className="text-sm text-gray-500">
+              Channel: {video.channel_id}
+            </p>
+            <button
+              onClick={handleSubscribe}
+              disabled={subscribing}
+              className={`px-4 py-2 text-sm font-medium rounded text-white transition
+                ${
+                  subscribing
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
+                }`}
+            >
+              {subscribing ? "Subscribing..." : "Subscribe"}
+            </button>
+          </div>
         )}
       </div>
     </div>

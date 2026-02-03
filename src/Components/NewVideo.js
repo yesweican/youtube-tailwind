@@ -154,7 +154,7 @@ function NewVideo() {
               </option>
 
               {channels.map(channel => (
-                <option key={channel._id} value={channel._id}>
+                <option key={channel.id} value={channel.id}>
                   {channel.name}
                 </option>
               ))}
