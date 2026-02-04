@@ -30,6 +30,8 @@ function SubscriptionVideos() {
 
         const data = await res.json();
         setVideos(data.results || []);
+
+        console.log("Fetched subscription videos:", data.results);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -72,7 +74,7 @@ function SubscriptionVideos() {
           >
             <RouterLink to={`/video/${video.id}`}>
               <video
-                src={video.video_url}
+                src={video.videoURL}
                 controls
                 className="w-full h-48 object-cover bg-black"
               />
@@ -88,7 +90,7 @@ function SubscriptionVideos() {
                 )}
 
                 <p className="text-xs text-gray-400">
-                  {new Date(video.created_at).toLocaleDateString()}
+                  {new Date(video.createdAt).toLocaleDateString()}
                 </p>
               </div>
             </RouterLink>
