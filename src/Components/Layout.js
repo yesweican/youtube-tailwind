@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Import your content components
 import Home from './Home';
-import Component1 from './Component1';
+import SubscriptionVideos from './SubscriptionVideos.js';
 import ChannelDisplay from './ChannelDisplay.js'; 
 import ChannelEdit from './ChannelEdit.js'; 
 import VideoSearch from './VideoSearch.js';
@@ -126,9 +126,9 @@ function Layout() {
             <button
               className="text-left p-2 hover:bg-gray-700 rounded-md"
             >
-              <Link to="/component1" className="text-left p-2 hover:bg-gray-700 rounded-md">
+              <Link to="/subsvideos" className="text-left p-2 hover:bg-gray-700 rounded-md">
               <FontAwesomeIcon icon={faFeed} className="mr-2" />
-                Menu 1
+                Subscription Videos
               </Link>
             </button>
             <button
@@ -233,7 +233,7 @@ function Layout() {
                 {/* Default route that redirects to /component1 */}
                 <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="/home" element={<Home />} />
-                <Route path="/component1" element={<Component1 />} />
+                <Route path="/subsvideos" element={<SubscriptionVideos />} />
                 <Route path="/channel/:id" element={<ChannelDisplay />} />
                 <Route path="/channeledit/:id" element={<ChannelEdit />} />  
                 <Route path="/videosearch" element={<VideoSearch />} />
