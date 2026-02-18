@@ -7,3 +7,5 @@ export const CHANNEL_API_END_POINT = "http://localhost:5000/api/channel";
 export const CHANNEL_SUBSCRIBERS_API_END_POINT = "http://localhost:5000/api/channelsubscribers";
 export const SUBSCRIPTION_API_END_POINT = "http://localhost:5000/api/subscription";
 export const SUBS_VIDEOS_API_END_POINT = "http://localhost:5000/api/subsvideos";
+export const COMMENTS_API_END_POINT = "http://localhost:5000/api/comments";
+export const VIDEO_COMMENTS_API_END_POINT = "http://localhost:5000/api/videocomments";
