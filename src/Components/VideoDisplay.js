@@ -205,7 +205,7 @@ function VideoDisplay() {
           <div key={c.id} className="bg-white rounded shadow p-3">
             <p className="text-sm text-gray-800">{c.comment_details}</p>
             <p className="text-xs text-gray-500 mt-1">
-              {c.creator_name} ·{" "}
+              {c.creator_username} ·{" "}
               {new Date(c.created_at).toLocaleString()}
             </p>
           </div>
