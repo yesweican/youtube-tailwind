@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CHANNEL_API_END_POINT } from "../config/constants";
+import ChannelSubscribers from "./ChannelSubscribers";
 
 function ChannelEdit() {
   const { id } = useParams();
@@ -160,6 +161,8 @@ function ChannelEdit() {
           </button>
         </div>
       </form>
+
+      <ChannelSubscribers />
     </div>
   );
 };

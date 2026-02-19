@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { SUBSCRIPTION_API_END_POINT, CHANNEL_API_END_POINT } from "../config/constants";
+import ChannelVideos from "./ChannelVideos";
 
 function ChannelDisplay() {
   const { id } = useParams();
@@ -109,6 +110,7 @@ function ChannelDisplay() {
           </p>
         )}
       </div>
+    <ChannelVideos />
     </div>
   );
 }

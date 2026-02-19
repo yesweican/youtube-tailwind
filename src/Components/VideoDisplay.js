@@ -158,7 +158,10 @@ function VideoDisplay() {
         {video.channel_id && (
           <div> 
             <p className="text-sm text-gray-500">
-              Channel: {video.channel_name}<span>( {video.channel_id} )</span>
+              <a href={`/channel/${video.channel_id}`}>
+                Channel:{video.channel_name}
+                <span>( {video.channel_id} )</span>
+              </a>
             </p>
             <button
               onClick={handleSubscribe}
