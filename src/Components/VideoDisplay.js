@@ -4,7 +4,8 @@ import {
   SUBSCRIPTION_API_END_POINT, 
   VIDEO_API_END_POINT,
   COMMENTS_API_END_POINT,
-  VIDEO_COMMENTS_API_END_POINT
+  VIDEO_COMMENTS_API_END_POINT,
+  VIDEOLIKE_API_END_POINT
 } from "../config/constants";
 
 function VideoDisplay() {
@@ -18,6 +19,9 @@ function VideoDisplay() {
   const [error, setError] = useState(null);
   const [subscribing, setSubscribing] = useState(false);
   const [posting, setPosting] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [liking, setLiking] = useState(false);
 
   const token = localStorage.getItem("accessToken"); 
 
@@ -40,7 +44,34 @@ function VideoDisplay() {
     };
 
     fetchVideo();
-  }, [id]);
+
+    const fetchLikes = async () => {
+      try {
+        const countRes = await fetch(
+          `${VIDEOLIKE_API_END_POINT}/count/${id}`
+        );
+        const countData = await countRes.json();
+        setLikeCount(countData.count ?? 0);
+
+        if (token) {
+          const checkRes = await fetch(
+            `${VIDEOLIKE_API_END_POINT}/check/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
+          );
+          const checkData = await checkRes.json();
+          setLiked(checkData.liked === true);
+        }
+      } catch (err) {
+        console.error("Failed to load likes", err);
+      }
+    };
+
+    fetchLikes();
+  }, [id, token]);
 
   /* ---------- Fetch Comments ---------- */
   useEffect(() => {
@@ -74,6 +105,41 @@ function VideoDisplay() {
       alert("Failed to subscribe");
     } finally {
       setSubscribing(false);
+    }
+  };
+
+  const handleLikeToggle = async () => {
+    if (!token) {
+      alert("Sign in to like videos");
+      return;
+    }
+
+    try {
+      setLiking(true);
+
+      const res = await fetch(
+        `${VIDEOLIKE_API_END_POINT}/${id}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to toggle like");
+
+      const data = await res.json();
+
+      setLiked(data.liked);
+      setLikeCount(prev =>
+        data.liked ? prev + 1 : prev - 1
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Failed to like video");
+    } finally {
+      setLiking(false);
     }
   };
 
@@ -154,6 +220,27 @@ function VideoDisplay() {
             {video.description}
           </p>
         )}
+
+        <div className="flex items-center gap-4 mt-3">
+          <button
+            onClick={handleLikeToggle}
+            disabled={liking}
+            className={`px-4 py-2 text-sm font-medium rounded transition
+              ${
+                liked
+                  ? "bg-red-600 text-white hover:bg-red-700"
+                  : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+              }
+              ${liking ? "opacity-50 cursor-not-allowed" : ""}
+            `}
+          >
+            {liked ? "Liked" : "Like"}
+          </button>
+
+          <span className="text-sm text-gray-600">
+            {likeCount} {likeCount === 1 ? "like" : "likes"}
+          </span>
+        </div>        
 
         {video.channel_id && (
           <div> 
