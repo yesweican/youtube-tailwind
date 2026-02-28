@@ -67,7 +67,7 @@ function ChannelSubscribers() {
 
       <div className="flex flex-col gap-4">
         {subscribers.map((subscriber) => (
-        <div>
+        <div key={subscriber.id} className="p-4 border rounded">
             <h2 className="text-sm font-semibold line-clamp-2 mb-1">
                 {subscriber.fullname}
             </h2>

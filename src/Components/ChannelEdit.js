@@ -106,7 +106,7 @@ function ChannelEdit() {
   -----------------------------*/
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-semibold mb-6">Edit Video</h1>
+      <h1 className="text-2xl font-semibold mb-6">Channel Edit</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}

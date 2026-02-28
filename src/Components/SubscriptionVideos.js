@@ -74,7 +74,7 @@ function SubscriptionVideos() {
           >
             <RouterLink to={`/video/${video.id}`}>
               <video
-                src={video.videoURL}
+                src={video.video_url}
                 controls
                 className="w-full h-48 object-cover bg-black"
               />
@@ -90,7 +90,7 @@ function SubscriptionVideos() {
                 )}
 
                 <p className="text-xs text-gray-400">
-                  {new Date(video.createdAt).toLocaleDateString()}
+                  {new Date(video.created_at).toLocaleDateString()}
                 </p>
               </div>
             </RouterLink>
