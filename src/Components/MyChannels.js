@@ -72,7 +72,7 @@ function MyChannels() {
                       focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <h2 className="text-sm font-semibold line-clamp-2 mb-1">
-              {channel.title}
+              {channel.name}
             </h2>
 
             {channel.description && (
