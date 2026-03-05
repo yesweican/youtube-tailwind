@@ -9,6 +9,10 @@ function ChannelVideos() {
   const [videoLoading, setVideoLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [page, setPage] = useState(0);       // 0-based
+  const [pageSize] = useState(3);
+  const [total, setTotal] = useState(0);
+
   useEffect(() => {
     const fetchVideos = async () => {
       try {
@@ -16,14 +20,7 @@ function ChannelVideos() {
         setError(null);
 
         //picking up token from local storage not from Cookies
-        const token = localStorage.getItem("accessToken");
-
-        const res = await fetch(`${CHANNEL_VIDEOS_API_END_POINT}/${id}`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-        });
-
+        const res = await fetch(`${CHANNEL_VIDEOS_API_END_POINT}/${id}?page=${page}&pageSize=${pageSize}`);
 
         if (!res.ok) {
           throw new Error("Failed to fetch search results");
@@ -35,6 +32,8 @@ function ChannelVideos() {
         console.log("Array?", Array.isArray(data.results), data.results);
 
         setVideos(data.results || []);
+        setTotal(data.total || 0);
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -43,7 +42,9 @@ function ChannelVideos() {
     };
 
     fetchVideos();
-  }, [id]);
+  }, [id, page, pageSize]);
+
+  const totalPages = Math.ceil(total / pageSize);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
@@ -90,6 +91,33 @@ function ChannelVideos() {
         </div>
       ))}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-6">
+          
+          <button
+            onClick={() => setPage(prev => Math.max(prev - 1, 0))}
+            disabled={page === 0}
+            className="px-4 py-2 border rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+
+          <span className="text-sm">
+            Page {page + 1} of {totalPages}
+          </span>
+
+          <button
+            onClick={() => setPage(prev => Math.min(prev + 1, totalPages - 1))}
+            disabled={page >= totalPages - 1}
+            className="px-4 py-2 border rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+
+        </div>
+      )}     
     </div>
   );
 }
