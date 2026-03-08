@@ -10,6 +10,12 @@ function VideoSearch() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [page, setPage] = useState(1); // UI page
+  const [pageSize] = useState(10);
+  const [total, setTotal] = useState(0);
+
+  const totalPages = Math.ceil(total / pageSize);
+
   useEffect(() => {
     if (!query.trim()) {
       setVideos([]);
@@ -22,10 +28,8 @@ function VideoSearch() {
         setError(null);
 
         const res = await fetch(
-          `${VIDEO_SEARCH_API_END_POINT}?q=${encodeURIComponent(query)}`,
-          {
-            credentials: "include",
-          }
+          `${VIDEO_SEARCH_API_END_POINT}?q=${encodeURIComponent(query)}&page=${page-1}&pageSize=${pageSize}`,
+          { credentials: "include" }
         );
 
         if (!res.ok) {
@@ -33,7 +37,10 @@ function VideoSearch() {
         }
 
         const data = await res.json();
+
         setVideos(data.results || []);
+        setTotal(data.total || 0);
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -42,13 +49,11 @@ function VideoSearch() {
     };
 
     fetchVideos();
-  }, [query]);
+  }, [query, page, pageSize]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
-      <h1 className="text-xl font-semibold mb-4">
-        Search Results
-      </h1>
+      <h1 className="text-xl font-semibold mb-4">Search Results</h1>
 
       {query && (
         <p className="text-sm text-gray-600 mb-6">
@@ -56,22 +61,12 @@ function VideoSearch() {
         </p>
       )}
 
-      {loading && (
-        <div className="text-gray-500">
-          Searching videos...
-        </div>
-      )}
+      {loading && <div className="text-gray-500">Searching videos...</div>}
 
-      {error && (
-        <div className="text-red-600">
-          {error}
-        </div>
-      )}
+      {error && <div className="text-red-600">{error}</div>}
 
       {!loading && !error && videos.length === 0 && query && (
-        <div className="text-gray-500">
-          No videos found.
-        </div>
+        <div className="text-gray-500">No videos found.</div>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -105,6 +100,30 @@ function VideoSearch() {
           </div>
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-8">
+          <button
+            onClick={() => setPage((p) => Math.max(p - 1, 1))}
+            disabled={page === 1}
+            className="px-4 py-2 border rounded disabled:opacity-40"
+          >
+            Previous
+          </button>
+
+          <span className="text-sm text-gray-700">
+            Page {page} of {totalPages}
+          </span>
+
+          <button
+            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+            disabled={page === totalPages}
+            className="px-4 py-2 border rounded disabled:opacity-40"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }
