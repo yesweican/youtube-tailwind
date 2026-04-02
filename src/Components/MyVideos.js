@@ -8,7 +8,7 @@ function MyVideos() {
   const [error, setError] = useState(null);
 
   const [page, setPage] = useState(0);       // 0-based
-  const [pageSize] = useState(3);
+  const [pageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
