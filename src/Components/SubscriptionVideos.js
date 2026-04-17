@@ -45,6 +45,8 @@ function SubscriptionVideos() {
 
       if (!res.ok) {
         const text = await res.text();
+        isFetchingRef.current = false; // ← add this
+        setLoading(false);             // ← and this
         throw new Error(`HTTP ${res.status}: ${text}`);
       }
 
