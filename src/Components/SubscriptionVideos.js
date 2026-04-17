@@ -1,5 +1,5 @@
 import { Link as RouterLink } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { SUBS_VIDEOS_API_END_POINT } from "../config/constants";
 
 function SubscriptionVideos() {
@@ -7,61 +7,112 @@ function SubscriptionVideos() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
-  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
-  const totalPages = Math.ceil(total / pageSize);
+  const pageSize = 20;
 
-  useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const observerRef = useRef(null);
+  const sentinelRef = useRef(null);
 
-        const token = localStorage.getItem("accessToken");
+  // 🔒 Prevent duplicate / concurrent fetches
+  const isFetchingRef = useRef(false);
 
-        const res = await fetch(
-          `${SUBS_VIDEOS_API_END_POINT}?page=${page-1}&pageSize=${pageSize}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+  const fetchVideos = useCallback(async (pageToFetch) => {
+    if (isFetchingRef.current) return;
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch subscription videos");
-        }
+    isFetchingRef.current = true;
 
-        const data = await res.json();
+    try {
+      setLoading(true);
+      setError(null);
 
-        setVideos(data.results || []);
-        setTotal(data.total || 0);
+      const token = localStorage.getItem("accessToken");
 
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      if (!token) {
+        setError("Please log in.");
+        return;
       }
-    };
 
-    fetchVideos();
-  }, [page, pageSize]);
+      const res = await fetch(
+        `${SUBS_VIDEOS_API_END_POINT}?page=${pageToFetch}&pageSize=${pageSize}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`HTTP ${res.status}: ${text}`);
+      }
+
+      const data = await res.json();
+      const newVideos = data.results || [];
+      const total = data.total || 0;
+
+      // ✅ Deduplicate
+      setVideos((prev) => {
+        const existingIds = new Set(prev.map((v) => v.id));
+        const filtered = newVideos.filter((v) => !existingIds.has(v.id));
+        return [...prev, ...filtered];
+      });
+
+      // ✅ Determine if more pages exist
+      setHasMore((pageToFetch + 1) * pageSize < total);
+
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+      isFetchingRef.current = false;
+    }
+  }, []);
+
+  // 🔁 Fetch when page changes
+  useEffect(() => {
+    fetchVideos(page);
+  }, [page, fetchVideos]);
+
+  // 👁️ IntersectionObserver setup (sentinel)
+  useEffect(() => {
+    if (observerRef.current) observerRef.current.disconnect();
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isFetchingRef.current) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      {
+        rootMargin: "200px", // 🔥 preload before reaching bottom
+      }
+    );
+
+    if (sentinelRef.current) {
+      observerRef.current.observe(sentinelRef.current);
+    }
+
+    return () => observerRef.current?.disconnect();
+  }, [hasMore]);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6">
-      <h1 className="text-xl font-semibold mb-4">Subscription Videos</h1>
+    <div className="max-w-5xl mx-auto px-4 py-6">
+      <h1 className="text-xl font-semibold mb-4">
+        Subscription Videos
+      </h1>
 
-      {loading && <div className="text-gray-500">Loading videos...</div>}
-
-      {error && <div className="text-red-600">{error}</div>}
+      {error && (
+        <div className="text-red-600 mb-4">{error}</div>
+      )}
 
       {!loading && !error && videos.length === 0 && (
         <div className="text-gray-500">No videos found.</div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {videos.map((video) => (
           <div
             key={video.id}
@@ -71,7 +122,7 @@ function SubscriptionVideos() {
               <video
                 src={video.video_url}
                 controls
-                className="w-full h-48 object-cover bg-black"
+                className="w-full h-56 object-cover bg-black"
               />
 
               <div className="p-4">
@@ -94,27 +145,18 @@ function SubscriptionVideos() {
         ))}
       </div>
 
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 mt-8">
-          <button
-            onClick={() => setPage((p) => Math.max(p - 1, 1))}
-            disabled={page === 1}
-            className="px-4 py-2 border rounded disabled:opacity-40"
-          >
-            Previous
-          </button>
+      {/* 🔻 Sentinel (infinite scroll trigger) */}
+      <div ref={sentinelRef} className="h-10" />
 
-          <span className="text-sm text-gray-700">
-            Page {page} of {totalPages}
-          </span>
+      {loading && (
+        <div className="text-center text-gray-500 mt-6">
+          Loading more videos...
+        </div>
+      )}
 
-          <button
-            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-            disabled={page === totalPages}
-            className="px-4 py-2 border rounded disabled:opacity-40"
-          >
-            Next
-          </button>
+      {!hasMore && videos.length > 0 && (
+        <div className="text-center text-gray-400 mt-6">
+          No more videos
         </div>
       )}
     </div>
